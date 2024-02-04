@@ -22,6 +22,12 @@ mongoose.connect(DB).then(() => {
   console.log("DB Connection successful!");
 });
 
+// Handling Uncaught Exceptions
+process.on("uncaughtException", (err) => {
+  console.log(err);
+  process.exit(1);
+});
+
 // ---------------App Module---------------
 // App module contains all the express logic
 const app = require("./app");
@@ -32,3 +38,11 @@ const PORT = process.env.PORT || 8000;
 server.listen(PORT, () =>
   console.log(`Server started at http://localhost:${PORT}`)
 );
+
+// Handling Unhanlded Rejections
+process.on("unhandledRejection", (err) => {
+  console.log(err);
+  server.close(() => {
+    process.exit(1);
+  });
+});

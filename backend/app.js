@@ -6,7 +6,14 @@ const express = require("express");
 // Parse HTTP request cookies
 const cookieParser = require("cookie-parser");
 
+// Error Handling
+// AppError class
+const AppError = require("./utils/appError");
+// Global Error Handler
+const globalErrorHandler = require("./controllers/errorController");
+
 // Routes
+const authRouter = require("./routes/authRoutes");
 const userRouter = require("./routes/userRoutes");
 
 const app = express();
@@ -19,6 +26,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Routes
+app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
+
+app.all("*", (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} in this server!`, 404));
+});
+app.use(globalErrorHandler);
+
+module.exports = app;
 
 module.exports = app;
