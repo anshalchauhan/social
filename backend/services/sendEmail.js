@@ -26,10 +26,14 @@ const sendEmail = async (options) => {
   const handlebarOptions = {
     viewEngine: {
       extName: ".handlebars",
-      partialsDir: path.resolve(`${__dirname}/../view/${options.emailType}`),
+      partialsDir: path.resolve(
+        `${__dirname}/../view/layouts/${options.emailType}`
+      ),
       defaultLayout: false,
     },
-    viewPath: path.resolve(`${__dirname}/../views/${options.emailType}`),
+    viewPath: path.resolve(
+      `${__dirname}/../views/layouts/${options.emailType}`
+    ),
     extName: ".handlebars",
   };
 

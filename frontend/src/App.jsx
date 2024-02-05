@@ -1,6 +1,7 @@
 // Pages
 import UserPage from "./pages/UserPage";
 import PostPage from "./pages/PostPage";
+import AuthPage from "./pages/AuthPage";
 
 // Navigation
 import { Routes, Route } from "react-router-dom";
@@ -16,6 +17,7 @@ function App() {
       <Routes>
         <Route path="/:username" element={<UserPage />} />
         <Route path="/:username/post/:pid" element={<PostPage />} />
+        <Route path="/auth" element={<AuthPage />} />
       </Routes>
     </Container>
   );

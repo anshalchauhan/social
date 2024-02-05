@@ -1,14 +1,14 @@
 // Requiring util module to get promisify function
 const { promisify } = require("util");
 
-// Library to implement JSON Web Tokens
-const jwt = require("jsonwebtoken");
-
 // A module for creating random strings and performing hashing, encryption, decryption
 const crypto = require("crypto");
 
 // OTP Generator
 const otpGenerator = require("otp-generator");
+
+// Library to implement JSON Web Tokens
+const jwt = require("jsonwebtoken");
 
 // Service to send email to user
 const sendEmail = require("../services/sendEmail");
@@ -27,42 +27,8 @@ const catchAsync = require("../utils/catchAsync");
 // Error Class
 const AppError = require("../utils/appError");
 
-// ----------JWT----------
-
-// Function to signing or creating JWT token
-const signToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
-};
-
-// Sending JWT token to user
-const sendToken = (user, statusCode, res, message) => {
-  const token = signToken(user._id);
-
-  const cookieOptions = {
-    expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
-    ),
-    httpOnly: true,
-  };
-
-  if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
-
-  res.cookie("jwt", token, cookieOptions);
-
-  // Remove password confidential fields like passwords and OTPs
-  user.password = undefined;
-  user.otp = undefined;
-  user.otpExpires = undefined;
-
-  res.status(statusCode).json({
-    status: "success",
-    token,
-    user,
-    message,
-  });
-};
+// JWT
+const sendToken = require("../utils/jwtToken");
 
 // Authentication Controllers
 // Signup
@@ -194,16 +160,21 @@ exports.login = catchAsync(async (req, res, next) => {
   sendToken(user, 200, res, "Login Successful!");
 });
 
+// Logout
+exports.logout = catchAsync(async (req, res, next) => {
+  // Clear the cookie after 1 millisecond
+  res.cookie("jwt", "", { maxAge: 1 });
+
+  res.status(200).json({
+    status: "success",
+    message: "Logged out successfully!",
+  });
+});
+
 // Protect
 exports.protect = catchAsync(async (req, res, next) => {
   // 1> Getting token and checking if it's there
-  let token;
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
-    token = req.headers.authorization.split(" ")[1];
-  }
+  const token = req.cookies.jwt;
 
   // 2> Verify Token
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
@@ -313,26 +284,5 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   // Middleware has been implemented
 
   // 4> Log the user in, send JWT
-  sendToken(user, 200, res, message);
-});
-
-// Update Password
-exports.updatePassword = catchAsync(async (req, res, next) => {
-  // 1> Get user from collection
-  const user = await User.findById(req.user.id).select("+password");
-
-  // 2> Check if Posted current password is correct
-  if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
-    return next(new AppError("Current Password is wrong!", 401));
-  }
-
-  // 3> If so, update password
-  user.password = req.body.password;
-  await user.save();
-
-  const message = "Password Updated!";
-  // User.findByIdAndUpdate will not work here because we are using many pre "save" middlewares
-
-  // 4> Log user in, sendJWT
   sendToken(user, 200, res, message);
 });

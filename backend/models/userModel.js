@@ -48,7 +48,7 @@ const userSchema = new mongoose.Schema(
     passwordResetExpires: Date,
     profilePic: {
       type: String,
-      defualt: "",
+      default: "",
     },
     followers: {
       type: [String],
@@ -90,6 +90,14 @@ userSchema.pre("save", async function (next) {
   this.otp = await bcryptjs.hash(this.otp, 12);
 
   next();
+});
+
+// Middleware to save passwordChangedAt Date
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password") || this.isNew) return next();
+
+  // Subtracting 1000ms or 1s from Date.now() because there is a posibility that token is generated before passwordChangedAt is updated
+  this.passwordChangedAt = Date.now() - 1000;
 });
 
 // Instance Methods
