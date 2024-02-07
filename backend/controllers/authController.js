@@ -41,7 +41,12 @@ exports.signup = catchAsync(async (req, res, next) => {
 
   // 1> Check if the user already exists and also verified
   if (user && user.verified)
-    return next(new AppError("Email is already in use, Please login.", 400));
+    return next(
+      new AppError(
+        "Email or Username is already in use, Please try another credentials.",
+        400
+      )
+    );
   // 2> If email is registerd but not verified
   if (user) {
     user.name = name;
@@ -218,7 +223,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   await user.save({ validateBeforeSave: false });
 
   // 3> Send it to user's email
-  const resetURL = `http://localhost:5173/auth/new-password?token=${resetToken}`;
+  const resetURL = `http://localhost:3000/auth/reset-password/${resetToken}`;
 
   const subject = "Reset your Social password";
 
@@ -268,10 +273,12 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     passwordResetExpires: { $gt: Date.now() },
   });
 
-  // 2> If token has not expired, and there is user, set then new password
+  // 2> Check if token has expired
   if (!user) {
     return next(new AppError("Token is invalid or has expired", 400));
   }
+
+  // 3> If token has not expired, and there is a user, set the new password
 
   user.password = req.body.password;
   user.passwordResetToken = undefined;

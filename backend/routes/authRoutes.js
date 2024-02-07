@@ -9,7 +9,6 @@ const router = express.Router();
 
 // APIs
 router.post("/signup", authController.signup, authController.sendOTP);
-router.post("/send-otp", authController.sendOTP);
 router.patch("/verify-otp", authController.verifyOTP);
 router.post("/login", authController.login);
 router.post("/logout", authController.protect, authController.logout);
