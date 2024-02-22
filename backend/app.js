@@ -2,6 +2,9 @@
 // Web Framework for Node.js
 const express = require("express");
 
+// Cross-origin resource sharing
+// const cors = require("cors");
+
 // ---------------Cookie-Parser---------------
 // Parse HTTP request cookies
 const cookieParser = require("cookie-parser");
@@ -18,6 +21,16 @@ const userRouter = require("./routes/userRoutes");
 const postRouter = require("./routes/postRoutes");
 
 const app = express();
+
+// Middlewares
+
+// app.use(
+//   cors({
+//     origin: "*",
+//     methods: ["GET", "PATCH", "POST", "DELETE", "PUT"],
+//     credentials: true,
+//   })
+// );
 
 // To parse JSON data in the req.body
 app.use(express.json());

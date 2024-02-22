@@ -15,7 +15,7 @@ const Post = require("../models/postModel");
 
 // Creating Post
 exports.createPost = catchAsync(async (req, res, next) => {
-  const { postedBy, text, img } = req.body;
+  const { postedBy, text, media, type } = req.body;
 
   // 1> Check if postedBy and text is provided
   if (!postedBy || !text) {
@@ -34,7 +34,7 @@ exports.createPost = catchAsync(async (req, res, next) => {
   }
 
   // 4> If everything is checked
-  const newPost = await Post.create({ postedBy, text, img });
+  const newPost = await Post.create({ postedBy, text, media, type });
   await newPost.save();
 
   res.status(200).json({
@@ -140,7 +140,28 @@ exports.replyToPost = catchAsync(async (req, res, next) => {
   });
 });
 
-// GEt Feed Posts
+// Get User Posts
+exports.getUserPosts = catchAsync(async (req, res, next) => {
+  const { username } = req.body;
+  const user = await User.findOne({ username });
+
+  // 1> Check if user exists
+  if (!user) {
+    return next(new AppError("User not found!", 404));
+  }
+
+  const userPosts = await Post.find({
+    postedBy: user._id,
+  }).sort({ createdAt: -1 });
+
+  res.status(200).json({
+    status: "success",
+    message: "User posts loaded successfully!",
+    posts: userPosts,
+  });
+});
+
+// Get Feed Posts
 exports.getFeedPosts = catchAsync(async (req, res, next) => {
   const userId = req.user._id;
   const user = await User.findById(userId);
@@ -151,7 +172,9 @@ exports.getFeedPosts = catchAsync(async (req, res, next) => {
   }
 
   const { following } = user;
-  const feedPosts = await Post.find({ postedBy: { $in: following } }).sort({
+  const feedPosts = await Post.find({
+    postedBy: { $in: [user._id, following] },
+  }).sort({
     createdAt: -1,
   });
 

@@ -1,31 +1,27 @@
 // React
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 
 // Components
-import LoginCard from "../components/auth/LoginCard";
-import SignupCard from "../components/auth/SignupCard";
-import VerifyOtpCard from "../components/auth/VerifyOtpCard";
-import ForgotPasswordCard from "../components/auth/ForgotPasswordCard";
+const LoginCard = lazy(() => import("../components/auth/LoginCard"));
+const SignupCard = lazy(() => import("../components/auth/SignupCard"));
+const VerifyOtpCard = lazy(() => import("../components/auth/VerifyOtpCard"));
+const ForgotPasswordCard = lazy(
+  () => import("../components/auth/ForgotPasswordCard")
+);
 
-const AuthPage = () => {
+function AuthPage() {
   const [active, setActive] = useState("login");
 
   return (
-    <>
-      {active === "login" && (
-        <LoginCard active={active} setActive={setActive} />
-      )}
-      {active === "signup" && (
-        <SignupCard active={active} setActive={setActive} />
-      )}
-      {active === "verifyotp" && (
-        <VerifyOtpCard active={active} setActive={setActive} />
-      )}
+    <Suspense fallback={<div>Loading...</div>}>
+      {active === "login" && <LoginCard setActive={setActive} />}
+      {active === "signup" && <SignupCard setActive={setActive} />}
+      {active === "verifyotp" && <VerifyOtpCard setActive={setActive} />}
       {active === "forgotpassword" && (
-        <ForgotPasswordCard active={active} setActive={setActive} />
+        <ForgotPasswordCard setActive={setActive} />
       )}
-    </>
+    </Suspense>
   );
-};
+}
 
 export default AuthPage;

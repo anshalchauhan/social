@@ -1,4 +1,4 @@
-const Share = () => {
+function Share() {
   return (
     <svg
       aria-label="Share"
@@ -19,16 +19,16 @@ const Share = () => {
         x2="9.218"
         y1="3"
         y2="10.083"
-      ></line>
+      />
       <polygon
         fill="none"
         points="11.698 20.334 22 3.001 2 3.001 9.218 10.084 11.698 20.334"
         stroke="currentColor"
         strokeLinejoin="round"
         strokeWidth="2"
-      ></polygon>
+      />
     </svg>
   );
-};
+}
 
 export default Share;

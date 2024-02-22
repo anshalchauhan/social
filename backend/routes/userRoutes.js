@@ -15,12 +15,14 @@ router.post(
   userController.followUnfollowUser
 );
 
-router.post(
+router.patch(
   "/update-user/:id",
   authController.protect,
   userController.updateUser
 );
 
-router.get("/user-profile/:username", userController.getUserProfile);
+router.get("/profile/:username", userController.getUserProfile);
+
+router.get("/s3", authController.protect, userController.generateUploadUrl);
 
 module.exports = router;

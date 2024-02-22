@@ -1,8 +1,8 @@
 // Components
 import ResetPasswordCard from "../components/auth/ResetPasswordCard";
 
-const ResetPasswordPage = () => {
+function ResetPasswordPage() {
   return <ResetPasswordCard />;
-};
+}
 
 export default ResetPasswordPage;

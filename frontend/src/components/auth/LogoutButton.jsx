@@ -1,44 +1,51 @@
+// React
+import { useEffect } from "react";
+
 // UI
-import { Button } from "@chakra-ui/react";
+import { Button, Spinner } from "@chakra-ui/react";
+import { MdLogout } from "react-icons/md";
 
-// Context
-import { useAppContext } from "../../context/Context";
+// Hooks
+import useShowToast from "../../hooks/useShowToast";
 
-const LogoutButton = () => {
-  // Context
-  const { setUser } = useAppContext();
+// Redux
+import { useDispatch } from "react-redux";
+import { setUser } from "../../store/store";
 
-  const handleLogout = async () => {
-    try {
-      const res = await fetch("/api/v1/auth/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await res.json();
+// Redux Toolkit Query
+import { useLogoutMutation } from "../../store/store";
 
-      if (data.error) {
-        showToast("Error", data.message, "error");
-      }
-      localStorage.removeItem("user-social");
-      setUser(null);
-    } catch (err) {
-      console.log(err);
-    }
+function LogoutButton() {
+  const showToast = useShowToast();
+  const dispatch = useDispatch();
+
+  // Redux Toolkit Query
+  const [logout, { data: logoutData, isLoading, isSuccess, isError, error }] =
+    useLogoutMutation();
+
+  const handleLogout = () => {
+    dispatch(setUser(null));
+    localStorage.removeItem("user");
+    localStorage.removeItem("verify-otp-email");
+    logout();
   };
+
+  useEffect(() => {
+    if (isSuccess) showToast("Success", logoutData.message, "success");
+    else if (isError) showToast("Error", error.data.message, "error");
+  }, [showToast, isSuccess, logoutData, isError, error]);
 
   return (
     <Button
-      position={"fixed"}
-      top={"30px"}
-      right={"30px"}
-      size={"sm"}
+      position="fixed"
+      top="30px"
+      right="30px"
+      size="sm"
       onClick={handleLogout}
     >
-      Logout
+      {isLoading ? <Spinner /> : <MdLogout size={20} />}
     </Button>
   );
-};
+}
 
 export default LogoutButton;

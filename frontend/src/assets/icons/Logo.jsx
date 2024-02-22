@@ -1,4 +1,7 @@
-const Logo = ({ colorMode, width, height }) => {
+// Validation
+import PropTypes from "prop-types";
+
+function Logo({ colorMode, width, height }) {
   const color = colorMode === "dark" ? "#fff" : "#000";
 
   return (
@@ -15,6 +18,12 @@ const Logo = ({ colorMode, width, height }) => {
       />
     </svg>
   );
+}
+
+Logo.propTypes = {
+  colorMode: PropTypes.string.isRequired,
+  width: PropTypes.string.isRequired,
+  height: PropTypes.string.isRequired,
 };
 
 export default Logo;

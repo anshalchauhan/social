@@ -1,8 +1,8 @@
 // Components
 import EmailSentCard from "../components/auth/EmailSentCard";
 
-const EmailSentPage = () => {
+function EmailSentPage() {
   return <EmailSentCard />;
-};
+}
 
 export default EmailSentPage;

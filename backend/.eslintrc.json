@@ -7,6 +7,9 @@
       {
         "endOfLine": "auto",
         "trailingComma": "es5"
+      },
+      {
+        "usePrettierrc": false
       }
     ],
     "spaced-comment": "off",
@@ -20,11 +23,6 @@
     "no-underscore-dangle": "off",
     "class-methods-use-this": "off",
     "prefer-destructuring": ["error", { "object": true, "array": false }],
-    "no-unused-vars": ["error", { "argsIgnorePattern": "req|res|next|val" }],
-    "import/no-useless-path-segments": "off",
-    "prefer-arrow-callback": "off",
-    "arrow-body-style": "off",
-    "import/no-extraneous-dependencies": "off"
-    // "parser": "babel-eslint"
+    "no-unused-vars": ["error", { "argsIgnorePattern": "req|res|next|val" }]
   }
 }

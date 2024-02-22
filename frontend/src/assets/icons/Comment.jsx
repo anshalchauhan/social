@@ -1,4 +1,4 @@
-const Comment = () => {
+function Comment() {
   return (
     <svg
       aria-label="Comment"
@@ -16,9 +16,9 @@ const Comment = () => {
         stroke="currentColor"
         strokeLinejoin="round"
         strokeWidth="2"
-      ></path>
+      />
     </svg>
   );
-};
+}
 
 export default Comment;

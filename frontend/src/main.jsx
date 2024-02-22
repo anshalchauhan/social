@@ -1,12 +1,20 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.jsx";
-import "./index.css";
-import { ChakraProvider, extendTheme, ColorModeScript } from "@chakra-ui/react";
-import { mode } from "@chakra-ui/theme-tools";
 import { BrowserRouter } from "react-router-dom";
-import { AppContextProvider } from "./context/Context.jsx";
+import { mode } from "@chakra-ui/theme-tools";
+import { ChakraProvider, extendTheme, ColorModeScript } from "@chakra-ui/react";
+// import { AppContextProvider } from "./context/Context";
+import App from "./App";
+import "./index.css";
 
+// Redux Toolkit Query
+import { Provider } from "react-redux";
+import { store } from "./store/store";
+
+// Base URL
+export const URL = "http://localhost:5000";
+
+// Styles
 const styles = {
   global: (props) => ({
     body: {
@@ -39,9 +47,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <BrowserRouter>
       <ChakraProvider theme={theme}>
         <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-        <AppContextProvider>
+        <Provider store={store}>
           <App />
-        </AppContextProvider>
+        </Provider>
       </ChakraProvider>
     </BrowserRouter>
   </React.StrictMode>

@@ -2,11 +2,10 @@
 const jwt = require("jsonwebtoken");
 
 // Function to signing or creating JWT token
-const signToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+const signToken = (id) =>
+  jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
-};
 
 // Sending JWT token to user and handling
 const sendToken = (user, statusCode, res, message) => {
@@ -24,7 +23,12 @@ const sendToken = (user, statusCode, res, message) => {
   res.cookie("jwt", token, cookieOptions);
 
   // Remove password confidential fields like passwords and OTPs
+  user.verified = undefined;
+  user.__v = undefined;
   user.password = undefined;
+  user.passwordChangedAt = undefined;
+  user.passwordResetExpires = undefined;
+  user.passwordResetToken = undefined;
   user.otp = undefined;
   user.otpExpires = undefined;
 
