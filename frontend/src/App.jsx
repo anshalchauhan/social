@@ -23,6 +23,7 @@ const CreatePost = lazy(() => import("./components/CreatePost"));
 
 // Redux
 import { useSelector } from "react-redux";
+import TextPage from "./pages/TextPage";
 
 function App() {
   const user = useSelector((state) => state.app.user);
@@ -57,6 +58,7 @@ function App() {
             element={user ? <UserPage /> : <Navigate to="/auth" />}
           />
           <Route path="/:username/post/:pid" element={<PostPage />} />
+          <Route path="/text" element={<TextPage />} />
         </Routes>
         {user && <LogoutButton />}
         {user && <CreatePost />}

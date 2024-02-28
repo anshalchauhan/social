@@ -12,50 +12,57 @@ import UserPost from "../components/UserPost";
 import useShowToast from "../hooks/useShowToast";
 
 // Redux toolkit Query
-import { useGetUserQuery } from "../store/store";
+import { useGetUserQuery, useGetUserPostsQuery } from "../store/store";
+import { useSelector } from "react-redux";
 
 function UserPage() {
   const [user, setUser] = useState(null);
+  // Current User (User who has logged in)
+  const { user: currentUser } = useSelector((state) => state.app);
   // Hooks
   const showToast = useShowToast();
   const { username } = useParams();
 
   // redux Toolkit Query
   const { data, error } = useGetUserQuery(username);
+  const {
+    data: postsData,
+    isLoading,
+    error: postsError,
+  } = useGetUserPostsQuery(username);
 
   useEffect(() => {
+    // Get user query
     if (data) setUser(data.user);
     else if (error) showToast("Error", error.data.message, "error");
-  }, [showToast, error, data]);
+    else if (postsError) showToast("Error", postsError.data.message, "error");
+  }, [showToast, error, data, postsData, postsError]);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (postsError) return <div>An error has occurred!</div>;
 
   return (
     <>
       {user && (
         <>
           <UserHeader user={user} />
-          <UserPost
-            likes={1200}
-            replies={481}
-            postImg="/post1.png"
-            postTitle="Let's talk about social."
-          />
-          <UserPost
-            likes={451}
-            replies={12}
-            postImg="https://social-image-upload.s3.ap-south-1.amazonaws.com/84c2422607f438bca725bd79d8c76a24"
-            postTitle="Nice tutorial."
-          />
-          <UserPost
-            likes={321}
-            replies={989}
-            postImg="https://social-image-upload.s3.ap-south-1.amazonaws.com/40bb8d860e1afe5d0da4d3eb479f4812"
-            postTitle="I love this guy."
-          />
-          <UserPost
-            likes={1200}
-            replies={481}
-            postTitle="This is my first thread."
-          />
+          {postsData?.data.map((post) => (
+            <UserPost
+              key={post._id}
+              id={post._id}
+              name={user.name}
+              username={user.username}
+              profilePic={user.profilePic}
+              postedBy={post.postedBy}
+              createdAt={post.createdAt}
+              media={post.media}
+              type={post.type}
+              text={post.text}
+              didLike={post.likes.includes(currentUser)}
+              likes={post.likes.length}
+              replies={post.replies}
+            />
+          ))}
         </>
       )}
     </>

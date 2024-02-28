@@ -130,7 +130,7 @@ exports.replyToPost = catchAsync(async (req, res, next) => {
     return next(new AppError("Post not found!", 404));
   }
 
-  const reply = { userId, text, profilePic, username };
+  const reply = { userId, text, profilePic, username, repliedAt: Date.now() };
   post.replies.push(reply);
   await post.save();
 
@@ -142,7 +142,7 @@ exports.replyToPost = catchAsync(async (req, res, next) => {
 
 // Get User Posts
 exports.getUserPosts = catchAsync(async (req, res, next) => {
-  const { username } = req.body;
+  const { username } = req.params;
   const user = await User.findOne({ username });
 
   // 1> Check if user exists
@@ -157,7 +157,7 @@ exports.getUserPosts = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     message: "User posts loaded successfully!",
-    posts: userPosts,
+    data: userPosts,
   });
 });
 
@@ -178,9 +178,21 @@ exports.getFeedPosts = catchAsync(async (req, res, next) => {
     createdAt: -1,
   });
 
+  const feedPostsWithUserData = await Promise.all(
+    feedPosts.map(async (post) => {
+      const postUser = await User.findById(post.postedBy);
+      return {
+        post,
+        name: postUser.name,
+        username: postUser.username,
+        profilePic: postUser.profilePic,
+      };
+    })
+  );
+
   res.status(200).json({
     status: "success",
     message: "Feed loaded successfully!",
-    feed: feedPosts,
+    data: feedPostsWithUserData,
   });
 });

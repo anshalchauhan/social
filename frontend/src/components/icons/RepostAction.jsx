@@ -1,4 +1,4 @@
-function Repost() {
+function RepostAction() {
   return (
     <svg
       aria-label="Repost"
@@ -18,4 +18,4 @@ function Repost() {
   );
 }
 
-export default Repost;
+export default RepostAction;

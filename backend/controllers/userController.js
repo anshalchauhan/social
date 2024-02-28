@@ -4,6 +4,11 @@ const crypto = require("crypto");
 // util module
 const { promisify } = require("util");
 
+// AWS
+// S3
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+
 // Error Handling
 // catchAsync function to handle catch blocks, we will wrap all our handler(controller) functions in this
 const catchAsync = require("../utils/catchAsync");
@@ -14,12 +19,14 @@ const AppError = require("../utils/appError");
 // Models
 // User
 const User = require("../models/userModel");
-// Post
-// const Post = require("../models/postModel");
 
-// AWS
-// S3
-const s3 = require("../aws/s3");
+const s3 = new S3Client({
+  region: process.env.AWS_S3_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
 
 exports.followUnfollowUser = catchAsync(async (req, res, next) => {
   // 1> Get the id for current user and user which has to be followed or unfollowed
@@ -118,14 +125,19 @@ exports.generateUploadUrl = catchAsync(async (req, res, next) => {
   const params = {
     Bucket: process.env.S3_BUCKET_NAME,
     Key: imageName,
-    Expires: 60,
   };
 
-  const uploadURL = await s3.getSignedUrlPromise("putObject", params);
+  // 3> Create Put Object command
+  const command = new PutObjectCommand(params);
+  const uploadURL = await getSignedUrl(s3, command, { expiresIn: 3600 });
 
   res.status(200).json({
     status: "success",
     url: uploadURL,
     message: "Upload Url created!",
   });
+});
+
+exports.getAllFollowing = catchAsync(async (req, res, next) => {
+  // 1> Getting all the following user's username, name and profile pic.
 });

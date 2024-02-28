@@ -1,4 +1,4 @@
-function Share() {
+function ShareAction() {
   return (
     <svg
       aria-label="Share"
@@ -31,4 +31,4 @@ function Share() {
   );
 }
 
-export default Share;
+export default ShareAction;

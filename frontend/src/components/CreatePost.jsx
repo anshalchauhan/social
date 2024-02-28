@@ -17,7 +17,6 @@ import {
   ModalCloseButton,
   useDisclosure,
   FormControl,
-  Textarea,
   Text,
   IconButton,
   Spinner,
@@ -26,13 +25,15 @@ import { AddIcon } from "@chakra-ui/icons";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { MdOutlineCancel } from "react-icons/md";
 
+// Components
+import ResizeTextArea from "./ResizeTextArea";
+
 // React-Redux
 import { useSelector } from "react-redux";
 
 // Hooks
 import usePreviewMedia from "../hooks/usePreviewMedia";
 import useShowToast from "../hooks/useShowToast";
-import useBase64ToBlob from "../hooks/useBase64ToBlob";
 
 // Redux Toolkit Query
 import { useGetS3Query, useCreatePostMutation } from "../store/store";
@@ -42,40 +43,24 @@ const CreatePost = () => {
   const [postText, setPostText] = useState("");
   const fileRef = useRef(null);
   const showToast = useShowToast();
-  const base64ToBlob = useBase64ToBlob();
   const user = useSelector((state) => state.app.user);
 
-  const { handleMediaChange, imgUrl, setImgUrl, videoAsset, setVideoAsset } =
-    usePreviewMedia();
+  const { handleMediaChange, media, setMedia } = usePreviewMedia();
 
   // Redux Toolkit Query
-  const { data: dataS3 } = useGetS3Query();
+  const { data: dataS3, refetch } = useGetS3Query();
   const [createPost, { data: postData, isLoading, isSuccess, isError, error }] =
     useCreatePostMutation();
 
   const handleCreatePost = async (e) => {
     e.preventDefault();
-    if (imgUrl) {
-      // Decoding base64 image to blob
-      const blob = base64ToBlob(imgUrl, "image/jpeg");
-
+    if (media) {
       await fetch(dataS3.url, {
         method: "PUT",
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": media?.type,
         },
-        body: blob,
-        ContentEncoding: "base64",
-        ContentType: "image/jpeg",
-      });
-    } else if (videoAsset) {
-      await fetch(dataS3.url, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        body: videoAsset,
-        ContentType: videoAsset?.type,
+        body: media,
       });
     }
 
@@ -83,29 +68,28 @@ const CreatePost = () => {
     createPost({
       postedBy: user,
       text: postText,
-      media: imgUrl || videoAsset ? dataS3.url.split("?")[0] : null,
-      type: imgUrl ? "image" : "video",
+      media: media ? dataS3.url.split("?")[0] : null,
+      type: media?.type,
     });
   };
 
   useEffect(() => {
-    console.log("hi");
     if (isSuccess) {
+      refetch();
       showToast("Success", postData.message, "success");
       onClose();
-      setImgUrl(null);
-      setVideoAsset(null);
+      setMedia(null);
       setPostText("");
     } else if (isError) showToast("Error", error.data.message, "error");
   }, [
+    refetch,
     showToast,
     isSuccess,
     isError,
     postData,
     error,
     onClose,
-    setImgUrl,
-    setVideoAsset,
+    setMedia,
     setPostText,
   ]);
 
@@ -125,8 +109,7 @@ const CreatePost = () => {
         isOpen={isOpen}
         onClose={() => {
           onClose();
-          setImgUrl(null);
-          setVideoAsset(null);
+          setMedia(null);
           setPostText("");
         }}
         size="xl"
@@ -149,7 +132,7 @@ const CreatePost = () => {
                   justifyContent="center"
                   position="relative"
                 >
-                  {imgUrl || videoAsset ? (
+                  {media ? (
                     <>
                       <IconButton
                         size="24px"
@@ -158,24 +141,20 @@ const CreatePost = () => {
                         top={2}
                         right={2}
                         onClick={() => {
-                          setImgUrl(null);
-                          setVideoAsset(null);
+                          setMedia(null);
                         }}
                         icon={<MdOutlineCancel size="24px" />}
                         zIndex={50}
                       />
-                      {imgUrl ? (
+                      {media?.type.startsWith("image/") ? (
                         <Image
                           overflow="hidden"
-                          src={imgUrl}
+                          src={media?.url}
                           alt="Uploaded Image"
                         />
                       ) : (
                         <video className="video" width="full" controls loop>
-                          <source
-                            src={videoAsset?.url}
-                            type={videoAsset?.type}
-                          ></source>
+                          <source src={media?.url} type={media?.type}></source>
                         </video>
                       )}
                     </>
@@ -199,19 +178,22 @@ const CreatePost = () => {
                 </Flex>
               </Flex>
               <FormControl>
-                <Textarea
+                <ResizeTextArea
                   placeholder="Post content goes here..."
-                  onChange={(e) => {
-                    setPostText(e.target.value);
-                  }}
-                  value={postText}
+                  val={postText}
+                  setVal={setPostText}
                 />
               </FormControl>
             </Flex>
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleCreatePost}>
+            <Button
+              colorScheme="blue"
+              isDisabled={postText ? false : true}
+              mr={3}
+              onClick={handleCreatePost}
+            >
               {isLoading ? <Spinner /> : "Post"}
             </Button>
           </ModalFooter>

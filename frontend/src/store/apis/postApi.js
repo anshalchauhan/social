@@ -6,7 +6,7 @@ const postApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "/api/v1/posts",
   }),
-  tagTypes: ["Post"],
+  tagTypes: ["Post", "Like", "Reply", "Delete"],
   endpoints(builder) {
     return {
       createPost: builder.mutation({
@@ -25,6 +25,7 @@ const postApi = createApi({
             }),
           };
         },
+        invalidatesTags: ["Post"],
       }),
 
       getPost: builder.query({
@@ -37,27 +38,29 @@ const postApi = createApi({
       }),
 
       deletePost: builder.mutation({
-        query: ({ id }) => {
+        query: (postId) => {
           return {
-            url: `/${id}`,
+            url: `/delete/${postId}`,
             method: "DELETE",
           };
         },
+        invalidatesTags: ["Delete"],
       }),
 
       likeUnlikePost: builder.mutation({
-        query: ({ id }) => {
+        query: (postId) => {
           return {
-            url: `/like/${id}`,
+            url: `/like/${postId}`,
             method: "POST",
           };
         },
+        invalidatesTags: ["Like"],
       }),
 
       replyToPost: builder.mutation({
-        query: ({ id, text }) => {
+        query: ({ postId, text }) => {
           return {
-            url: `/reply/${id}`,
+            url: `/reply/${postId}`,
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -67,21 +70,17 @@ const postApi = createApi({
             }),
           };
         },
+        invalidatesTags: ["Reply"],
       }),
 
       getUserPosts: builder.query({
-        query: ({ username }) => {
+        query: (username) => {
           return {
-            url: "/userPosts",
+            url: `/userPosts/${username}`,
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              username,
-            }),
           };
         },
+        providesTags: ["Post", "Like", "Reply", "Delete"],
       }),
 
       getFeedPosts: builder.query({
@@ -91,6 +90,7 @@ const postApi = createApi({
             method: "POST",
           };
         },
+        providesTags: ["Post", "Like", "Reply", "Delete"],
       }),
     };
   },

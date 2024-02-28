@@ -15,7 +15,7 @@ import { BsThreeDots } from "react-icons/bs";
 
 // Components
 const Actions = lazy(() => import("../components/Actions"));
-const Comment = lazy(() => import("../components/Comment"));
+const Reply = lazy(() => import("../components/Reply"));
 
 function PostPage() {
   // Actions
@@ -75,27 +75,6 @@ function PostPage() {
       </Flex>
 
       <Divider my={4} />
-      <Comment
-        comment="Looks really good!"
-        createdAt="2d"
-        likes={100}
-        userName="johndoe"
-        userAvatar="https://bit.ly/dan-abramov"
-      />
-      <Comment
-        comment="Looks really good!"
-        createdAt="2d"
-        likes={100}
-        userName="johndoe"
-        userAvatar="https://bit.ly/dan-abramov"
-      />
-      <Comment
-        comment="Looks really good!"
-        createdAt="2d"
-        likes={100}
-        userName="johndoe"
-        userAvatar="https://bit.ly/dan-abramov"
-      />
     </Suspense>
   );
 }

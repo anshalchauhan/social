@@ -27,16 +27,15 @@ import {
 // Hooks
 import useShowToast from "../hooks/useShowToast";
 import usePreviewMedia from "../hooks/usePreviewMedia";
-import useBase64ToBlob from "../hooks/useBase64ToBlob";
 
 export default function UpdateProfilePage() {
   const showToast = useShowToast();
-  const base64ToBlob = useBase64ToBlob();
   const navigate = useNavigate();
 
   const { username: usernameUpdate } = useParams();
   // Redux Toolkit Query, GetUser data
-  const { data: dataUser } = useGetUserQuery(usernameUpdate);
+  const { data: dataUser, refetch: getUserRefetch } =
+    useGetUserQuery(usernameUpdate);
 
   // Handling Inputs
   const [name, setName] = useState(dataUser?.user.name);
@@ -46,10 +45,10 @@ export default function UpdateProfilePage() {
 
   // Profile Image handling
   const fileRef = useRef(null);
-  const { handleMediaChange, imgUrl } = usePreviewMedia();
+  const { handleMediaChange, media } = usePreviewMedia();
 
   // Redux Toolkit Query
-  const { data: dataS3 } = useGetS3Query();
+  const { data: dataS3, refetch } = useGetS3Query();
   const [
     updateUser,
     { data: updateUserData, isLoading, isSuccess, isError, error },
@@ -57,36 +56,42 @@ export default function UpdateProfilePage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (imgUrl) {
-      // Decoding base64 image to blob
-      const blob = base64ToBlob(imgUrl, "image/jpeg");
+    if (media) {
       await fetch(dataS3.url, {
         method: "PUT",
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": media?.type,
         },
-        body: blob,
-        ContentEncoding: "base64",
-        ContentType: "image/jpeg",
+        body: media,
       });
     }
+
     // Updating user profile
     updateUser({
       id: dataUser?.user._id,
       name,
       username,
       bio,
-      profilePic: imgUrl ? dataS3.url.split("?")[0] : null,
+      profilePic: media ? dataS3.url.split("?")[0] : null,
       password,
     });
   };
 
   useEffect(() => {
     if (isSuccess) {
+      refetch();
+      getUserRefetch();
       showToast("Success", updateUserData.message, "success");
     } else if (isError) showToast("Error", error.data.message, "error");
-  }, [showToast, isSuccess, isError, updateUserData, error]);
+  }, [
+    refetch,
+    getUserRefetch,
+    showToast,
+    isSuccess,
+    isError,
+    updateUserData,
+    error,
+  ]);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -109,7 +114,7 @@ export default function UpdateProfilePage() {
               <Avatar
                 size="xl"
                 boxShadow="md"
-                src={imgUrl || dataUser?.user.profilePic}
+                src={media?.url || dataUser?.user.profilePic}
               />
               <Button w="full" onClick={() => fileRef.current.click()}>
                 Change Avatar

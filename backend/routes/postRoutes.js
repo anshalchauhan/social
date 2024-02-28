@@ -16,6 +16,10 @@ router.delete("/delete/:id", authController.protect, postController.deletePost);
 router.post("/like/:id", authController.protect, postController.likeUnlikePost);
 router.post("/reply/:id", authController.protect, postController.replyToPost);
 router.post("/feed", authController.protect, postController.getFeedPosts);
-router.post("/userPosts", authController.protect, postController.getUserPosts);
+router.post(
+  "/userPosts/:username",
+  authController.protect,
+  postController.getUserPosts
+);
 
 module.exports = router;
