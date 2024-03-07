@@ -138,6 +138,82 @@ exports.generateUploadUrl = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getAllFollowing = catchAsync(async (req, res, next) => {
-  // 1> Getting all the following user's username, name and profile pic.
+exports.getUsers = catchAsync(async (req, res, next) => {
+  const { searchQuery } = req.params;
+  const id = req.user._id;
+  let friendsSuggestions;
+  // If user searches some name
+  if (searchQuery !== "nosearch") {
+    friendsSuggestions = await User.find({
+      $and: [
+        { _id: { $ne: id } },
+        {
+          $or: [
+            { name: { $regex: `(?i)^${searchQuery}` } },
+            { username: { $regex: `(?i)^${searchQuery}` } },
+          ],
+        },
+      ],
+    })
+      .select({
+        _id: 0,
+        username: 1,
+        name: 1,
+        profilePic: 1,
+      })
+      .limit(5);
+  } else {
+    // If user does not searches any name
+    // Getting list of accounts who are following user
+    const user = await User.findById(id);
+    const { following } = user;
+    // Not followed
+    const notFollowed = await User.find({
+      _id: { $ne: id, $nin: following },
+    }).select({ _id: 0, username: 1, name: 1, profilePic: 1 });
+    // Followed
+    const followed = await User.find({
+      _id: { $in: following },
+    }).select({ _id: 0, username: 1, name: 1, profilePic: 1 });
+    followed.forEach((val) => notFollowed.push(val));
+    friendsSuggestions = notFollowed.slice(0, 5);
+  }
+
+  res.status(200).json({
+    status: "success",
+    message: "Users fetched successfully!",
+    data: friendsSuggestions,
+  });
+});
+
+exports.getFollowers = catchAsync(async (req, res, next) => {
+  // User findById
+  const user = await User.findById(req.user._id);
+
+  // Get followers
+  const followers = await User.find({
+    _id: { $in: user.followers },
+  }).select({ _id: 0, username: 1, name: 1, profilePic: 1 });
+
+  res.status(200).json({
+    status: "success",
+    message: "Followers fetched successfully!",
+    data: followers,
+  });
+});
+
+exports.getFollowing = catchAsync(async (req, res, next) => {
+  // User findById
+  const user = await User.findById(req.user._id);
+
+  // Get following
+  const following = await User.find({
+    _id: { $in: user.following },
+  }).select({ _id: 0, username: 1, name: 1, profilePic: 1 });
+
+  res.status(200).json({
+    status: "success",
+    message: "Following fetched successfully!",
+    data: following,
+  });
 });

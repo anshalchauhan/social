@@ -3,14 +3,16 @@ import { useEffect } from "react";
 
 // UI
 import { Button, Spinner } from "@chakra-ui/react";
-import { MdLogout } from "react-icons/md";
 
 // Hooks
 import useShowToast from "../../hooks/useShowToast";
 
+// React-Icons
+import { IoLogOutOutline } from "react-icons/io5";
+
 // Redux
 import { useDispatch } from "react-redux";
-import { setUser } from "../../store/store";
+import { setUser, setUsernameState } from "../../store/store";
 
 // Redux Toolkit Query
 import { useLogoutMutation } from "../../store/store";
@@ -25,9 +27,12 @@ function LogoutButton() {
 
   const handleLogout = () => {
     dispatch(setUser(null));
+    dispatch(setUsernameState(null));
     localStorage.removeItem("user");
+    localStorage.removeItem("username");
     localStorage.removeItem("verify-otp-email");
     logout();
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -37,13 +42,14 @@ function LogoutButton() {
 
   return (
     <Button
-      position="fixed"
-      top="30px"
-      right="30px"
-      size="sm"
+      leftIcon={isLoading ? <Spinner /> : <IoLogOutOutline size={32} />}
       onClick={handleLogout}
+      aria-label="Logout"
+      justifyContent="flex-start"
+      variant="ghost"
+      fontSize="sm"
     >
-      {isLoading ? <Spinner /> : <MdLogout size={20} />}
+      Logout
     </Button>
   );
 }

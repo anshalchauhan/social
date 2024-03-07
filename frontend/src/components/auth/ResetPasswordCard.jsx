@@ -25,7 +25,7 @@ import useShowToast from "../../hooks/useShowToast";
 
 // Redux
 import { useDispatch } from "react-redux";
-import { setUser } from "../../store/store";
+import { setUser, setUsernameState } from "../../store/store";
 
 // Redux Toolkit Query
 import { useResetPasswordMutation } from "../../store/store";
@@ -57,7 +57,9 @@ function ResetPasswordCard() {
     if (isSuccess) {
       showToast("Success", resetPasswordData.message, "success");
       localStorage.setItem("user", resetPasswordData.user._id);
+      localStorage.setItem("username", resetPasswordData.user.username);
       dispatch(setUser(resetPasswordData.user._id));
+      dispatch(setUsernameState(resetPasswordData.user.username));
     } else if (isError) showToast("Error", error.data.message, "error");
   }, [showToast, dispatch, isSuccess, isError, resetPasswordData, error]);
 

@@ -15,6 +15,7 @@ import {
   MenuItem,
   IconButton,
   Spinner,
+  Button,
 } from "@chakra-ui/react";
 import { BsThreeDots } from "react-icons/bs";
 
@@ -22,7 +23,7 @@ import { BsThreeDots } from "react-icons/bs";
 import Actions from "./Actions";
 
 // Navigation
-// import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // Hooks
 import useShowToast from "../hooks/useShowToast";
@@ -50,13 +51,14 @@ function UserPost({
   likes,
   replies,
 }) {
+  const showToast = useShowToast();
+  const user = useSelector((state) => state.app.user);
+  const navigate = useNavigate();
+
   // Date
   // Calculating how many days since post was uploaded
   let days = new Date(createdAt);
   days = Math.floor(Math.abs(Date.now() - days) / (24 * 60 * 60 * 1000));
-
-  const showToast = useShowToast();
-  const user = useSelector((state) => state.app.user);
 
   const [
     deletePost,
@@ -74,8 +76,7 @@ function UserPost({
 
   return (
     <>
-      {/* <Link to="/am1234/post/1"> */}
-      <Flex gap={3} mb={4} py={5}>
+      <Flex gap={3}>
         <Flex direction="column" align="center">
           <Avatar size="md" name={name} src={profilePic} />
           <Box w="1" h="full" bg="gray.light" my={2} />
@@ -118,9 +119,14 @@ function UserPost({
         <Flex flex={1} direction="column" gap={2}>
           <Flex justify="space-between" w="full">
             <Flex align="center">
-              <Text fontSize="sm" fontWeight="bold">
+              <Button
+                fontSize="sm"
+                fontWeight="bold"
+                variant="link"
+                onClick={() => navigate(`/${username}`)}
+              >
                 {username}
-              </Text>
+              </Button>
               <Image src="/verified.png" w={4} h={4} ml={1} />
             </Flex>
             <Flex gap={4} align="center">
@@ -155,15 +161,17 @@ function UserPost({
                   <Image
                     src={media}
                     width="auto"
-                    maxHeight="400px"
+                    maxHeight="600px"
                     overflow="hidden"
                     alt="Uploaded Image"
                   />
                 </Flex>
               ) : (
-                <video className="video" width="full" controls loop>
-                  <source src={media} type={type}></source>
-                </video>
+                <Flex alignItems="center" justifyContent="center">
+                  <video className="video" width="full" controls loop>
+                    <source src={media} type={type}></source>
+                  </video>
+                </Flex>
               )}
             </Box>
           )}

@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 // UI
-import { Button, Flex, Spinner } from "@chakra-ui/react";
+import { Box, Button, Flex, Spinner } from "@chakra-ui/react";
 
 // Components
 import LikeAction from "./icons/LikeAction";
@@ -83,15 +83,17 @@ function Actions({ postId, didLike, replies }) {
               </Button>
             </Flex>
           </Flex>
-          {replies?.map((reply) => (
-            <Reply
-              key={reply._id}
-              text={reply.text}
-              username={reply.username}
-              profilePic={reply.profilePic}
-              repliedAt={reply.repliedAt}
-            />
-          ))}
+          <Box className="scroll" overflowY="scroll" maxH="400px">
+            {replies?.map((reply) => (
+              <Reply
+                key={reply._id}
+                text={reply.text}
+                username={reply.username}
+                profilePic={reply.profilePic}
+                repliedAt={reply.repliedAt}
+              />
+            ))}
+          </Box>
         </Flex>
       )}
     </Flex>

@@ -17,3 +17,24 @@
   max-height: 300px;
   cursor: pointer;
 }
+
+.scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll:hover::-webkit-scrollbar {
+  display: block;
+}
+
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #101010;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #616161;
+  border-radius: 10px;
+}

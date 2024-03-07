@@ -21,7 +21,7 @@ import {
   IconButton,
   Spinner,
 } from "@chakra-ui/react";
-import { AddIcon } from "@chakra-ui/icons";
+import { LuImagePlus } from "react-icons/lu";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { MdOutlineCancel } from "react-icons/md";
 
@@ -96,14 +96,14 @@ const CreatePost = () => {
   return (
     <>
       <Button
-        position="fixed"
-        bottom={10}
-        right={10}
-        leftIcon={<AddIcon />}
-        bg={useColorModeValue("gray.300", "gray.dark")}
+        leftIcon={<LuImagePlus size={32} />}
+        aria-label="Create Post"
+        variant="ghost"
+        justifyContent="flex-start"
+        fontSize="sm"
         onClick={onOpen}
       >
-        Post
+        Create Post
       </Button>
       <Modal
         isOpen={isOpen}

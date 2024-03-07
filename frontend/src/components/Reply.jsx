@@ -16,14 +16,14 @@ function Reply({ text, username, profilePic, repliedAt }) {
         <Avatar src={profilePic} size="sm" />
         <Flex w="full" gap={1} direction="column">
           <Flex justify="space-between" align="center">
-            <Text fontSize="sm" fontWeight="bold">
+            <Text fontSize="xs" fontWeight="bold">
               {username}
             </Text>
-            <Text fontSize="sm" color="gray.light">
+            <Text marginRight={2} fontSize="xs" color="gray.light">
               {days ? `${days}d` : "today"}
             </Text>
           </Flex>
-          <Text wordBreak="break-all" whiteSpace="pre-wrap">
+          <Text fontSize="sm" wordBreak="break-all" whiteSpace="pre-wrap">
             {text}
           </Text>
         </Flex>

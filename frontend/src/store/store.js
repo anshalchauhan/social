@@ -23,7 +23,7 @@ const store = configureStore({
 
 setupListeners(store.dispatch);
 
-export { setUser } from "./slices/appSlice";
+export { setUser, setUsernameState } from "./slices/appSlice";
 
 export {
   useLoginMutation,
@@ -39,6 +39,9 @@ export {
   useGetS3Query,
   useFollowUnfollowUserMutation,
   useUpdateUserMutation,
+  useLazyGetUsersQuery,
+  useGetFollowersQuery,
+  useGetFollowingQuery,
 } from "./apis/userApi";
 
 export {

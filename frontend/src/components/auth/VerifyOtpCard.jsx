@@ -19,7 +19,7 @@ import useShowToast from "../../hooks/useShowToast";
 
 // Redux
 import { useDispatch } from "react-redux";
-import { setUser } from "../../store/store";
+import { setUser, setUsernameState } from "../../store/store";
 
 // Redux Toolkit Query
 import { useVerifyOtpMutation } from "../../store/store";
@@ -54,7 +54,9 @@ function VerifyOtpCard() {
     if (isSuccess) {
       showToast("Success", otpData.message, "success");
       localStorage.setItem("user", otpData.user._id);
+      localStorage.setItem("username", otpData.user.username);
       dispatch(setUser(otpData.user._id));
+      dispatch(setUsernameState(otpData.user.username));
       localStorage.removeItem("verify-otp-email");
     } else if (isError) showToast("Error", error.data.message, "error");
   }, [showToast, dispatch, isSuccess, isError, otpData, error]);

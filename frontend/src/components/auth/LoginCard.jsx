@@ -27,7 +27,7 @@ import useShowToast from "../../hooks/useShowToast";
 // Redux
 import { useDispatch } from "react-redux";
 // import { setUser } from "../../store/store";
-import { setUser } from "../../store/slices/appSlice";
+import { setUser, setUsernameState } from "../../store/store";
 
 // Redux Toolkit Query
 import { useLoginMutation } from "../../store/store";
@@ -57,7 +57,9 @@ function LoginCard({ setActive }) {
     if (isSuccess) {
       showToast("Success", loginData.message, "success");
       localStorage.setItem("user", loginData.user._id);
+      localStorage.setItem("username", loginData.user.username);
       dispatch(setUser(loginData.user._id));
+      dispatch(setUsernameState(loginData.user.username));
     } else if (isError) showToast("Error", error.data.message, "error");
   }, [showToast, dispatch, isSuccess, isError, loginData, error]);
 

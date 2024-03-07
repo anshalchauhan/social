@@ -146,27 +146,7 @@ function UserHeader({ user }) {
           </Box>
         </Flex>
       </Flex>
-      <Flex w="full">
-        <Flex
-          flex={1}
-          borderBottom="1.5px solid white"
-          justify="center"
-          pb="3"
-          cursor="pointer"
-        >
-          <Text fontWeight="bold">Posts</Text>
-        </Flex>
-        <Flex
-          flex={1}
-          borderBottom="1px solid gray"
-          justify="center"
-          color="gray.light"
-          pb="3"
-          cursor="pointer"
-        >
-          <Text fontWeight="bold">Replies</Text>
-        </Flex>
-      </Flex>
+      <Box w="full" h={0.25} bg={useColorModeValue("gray.dark", "white")}></Box>
     </Flex>
   );
 }

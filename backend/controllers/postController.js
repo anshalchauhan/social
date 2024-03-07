@@ -173,7 +173,7 @@ exports.getFeedPosts = catchAsync(async (req, res, next) => {
 
   const { following } = user;
   const feedPosts = await Post.find({
-    postedBy: { $in: [user._id, following] },
+    $or: [{ postedBy: user._id }, { postedBy: { $in: following } }],
   }).sort({
     createdAt: -1,
   });

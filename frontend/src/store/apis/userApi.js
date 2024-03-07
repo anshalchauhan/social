@@ -56,6 +56,33 @@ const userApi = createApi({
           };
         },
       }),
+
+      getUsers: builder.query({
+        query: (searchQuery) => {
+          return {
+            url: `/search/${searchQuery === "" ? "nosearch" : searchQuery}`,
+            method: "GET",
+          };
+        },
+      }),
+
+      getFollowers: builder.query({
+        query: () => {
+          return {
+            url: "/getFollowers",
+            method: "GET",
+          };
+        },
+      }),
+
+      getFollowing: builder.query({
+        query: () => {
+          return {
+            url: "/getFollowing",
+            method: "GET",
+          };
+        },
+      }),
     };
   },
 });
@@ -65,5 +92,8 @@ export const {
   useGetS3Query,
   useFollowUnfollowUserMutation,
   useUpdateUserMutation,
+  useLazyGetUsersQuery,
+  useGetFollowersQuery,
+  useGetFollowingQuery,
 } = userApi;
 export { userApi };
