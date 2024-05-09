@@ -9,7 +9,8 @@ export default defineConfig({
     // To fix cors errors
     proxy: {
       "/api": {
-        target: "http://localhost:5000",
+        // target: "http://localhost:8000",
+        target: "http://api:8000",
         changeOrigin: true,
         secure: false,
       },
