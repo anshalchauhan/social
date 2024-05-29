@@ -6,6 +6,7 @@ pipeline {
         DOCKER_IMAGE_TAG = "${BUILD_NUMBER}"
         CLIENT_DIR = "client"
         SERVER_DIR = "server"
+        DOCKERFILE_NAME = "Dockerfile.prod" // Specify the name of your Dockerfile
     }
 
     stages {
@@ -22,8 +23,8 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
                         // Build Docker images for frontend + nginx, and backend
                         sh """
-                        docker build -t ${DOCKERHUB_USERNAME}/social-client:${env.DOCKER_IMAGE_TAG} ${env.CLIENT_DIR}
-                        docker build -t ${DOCKERHUB_USERNAME}/social-server:${env.DOCKER_IMAGE_TAG} ${env.SERVER_DIR}
+                        docker build -t ${DOCKERHUB_USERNAME}/social-client:${env.DOCKER_IMAGE_TAG} -f ${DOCKERFILE_NAME} ${env.CLIENT_DIR}
+                        docker build -t ${DOCKERHUB_USERNAME}/social-server:${env.DOCKER_IMAGE_TAG} -f ${DOCKERFILE_NAME} ${env.SERVER_DIR}
                         """
                     }
                 }
