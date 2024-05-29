@@ -1,17 +1,7 @@
 services:
-  nginx:
-    depends_on:
-      - client
-      - api
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile.dev
-    container_name: social-nginx
-    restart: always
-    ports:
-      - 3050:80
-
   client:
+    depends_on:
+      - api
     build:
       context: ./client
       dockerfile: Dockerfile.dev
@@ -19,8 +9,8 @@ services:
     volumes:
       - ./client:/app
       - /app/node_modules
-    # ports:
-    # - 3000:3000
+    ports:
+      - 3000:80
     develop:
       watch:
         - path: ./client/package.json
@@ -39,8 +29,6 @@ services:
     volumes:
       - ./server:/app
       - /app/node_modules
-    # ports:
-    # - 8000:8000
     env_file:
       - ./server/.env
     develop:

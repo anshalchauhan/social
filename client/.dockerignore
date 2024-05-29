@@ -17,6 +17,7 @@
 **/docker-compose*
 **/compose*
 **/Dockerfile*
+**/default.conf
 **/.eslint*
 **/node_modules
 **/npm-debug.log

@@ -1,0 +1,20 @@
+services:
+  client:
+    depends_on:
+      - api
+    build:
+      context: ./client
+      dockerfile: Dockerfile.prod
+    container_name: social-client
+    restart: always
+    ports:
+      - 3000:80
+
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.prod
+    container_name: social-server
+    restart: always
+    env_file:
+      - ./server/.env
