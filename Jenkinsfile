@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials') // ID of Docker Hub credentials in Jenkins
         DOCKER_IMAGE_TAG = "${BUILD_NUMBER}"
         CLIENT_DIR = "client"
         SERVER_DIR = "server"
@@ -12,27 +13,6 @@ pipeline {
             steps {
                 // Checkout code from the repository
                 checkout scm
-            }
-        }
-
-        stage('Build Frontend + Nginx') {
-            steps {
-                dir("${env.CLIENT_DIR}") {
-                    script {
-                        sh 'npm install'
-                        sh 'npm run build'
-                    }
-                }
-            }
-        }
-
-        stage('Build Backend') {
-            steps {
-                dir("${env.SERVER_DIR}") {
-                    script {
-                        sh 'npm install'
-                    }
-                }
             }
         }
 
