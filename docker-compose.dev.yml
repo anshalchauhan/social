@@ -11,32 +11,14 @@ services:
       - /app/node_modules
     ports:
       - 3000:80
-    develop:
-      watch:
-        - path: ./client/package.json
-          action: rebuild
-        - path: ./client/package-lock.json
-          action: rebuild
-        - path: ./client
-          target: /app
-          action: sync
 
   api:
     build:
-      context: ./server
+      context: ./api
       dockerfile: Dockerfile.dev
-    container_name: social-server
+    container_name: social-api
     volumes:
-      - ./server:/app
+      - ./api:/app
       - /app/node_modules
     env_file:
-      - ./server/.env
-    develop:
-      watch:
-        - path: ./server/package.json
-          action: rebuild
-        - path: ./server/package-lock.json
-          action: rebuild
-        - path: ./server
-          target: /app
-          action: sync
+      - ./api/.env

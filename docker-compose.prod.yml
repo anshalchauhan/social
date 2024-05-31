@@ -12,9 +12,9 @@ services:
 
   api:
     build:
-      context: ./server
+      context: ./api
       dockerfile: Dockerfile.prod
-    container_name: social-server
+    container_name: social-api
     restart: always
     env_file:
-      - ./server/.env
+      - ./api/.env
