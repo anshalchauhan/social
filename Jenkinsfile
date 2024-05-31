@@ -23,8 +23,8 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
                         // Build Docker images for frontend + nginx, and backend
                         sh """
-                        docker build -t ${DOCKERHUB_USERNAME}/social-client:${env.DOCKER_IMAGE_TAG} -f /client/${DOCKERFILE_NAME} ${env.CLIENT_DIR}
-                        docker build -t ${DOCKERHUB_USERNAME}/social-server:${env.DOCKER_IMAGE_TAG} -f /server/${DOCKERFILE_NAME} ${env.SERVER_DIR}
+                        docker build -t ${DOCKERHUB_USERNAME}/social-client:${env.DOCKER_IMAGE_TAG} -f ${env.WORKSPACE}/client/${DOCKERFILE_NAME} ${env.CLIENT_DIR}
+                        docker build -t ${DOCKERHUB_USERNAME}/social-server:${env.DOCKER_IMAGE_TAG} -f ${env.WORKSPACE}/server/${DOCKERFILE_NAME} ${env.SERVER_DIR}
                         """
                     }
                 }
