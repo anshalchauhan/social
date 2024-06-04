@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent { label slave-social }
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials') // ID of Docker Hub credentials in Jenkins
