@@ -5,7 +5,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials') // ID of Docker Hub credentials in Jenkins
         DOCKER_IMAGE_TAG = "${BUILD_NUMBER}"
         CLIENT_DIR = "client"
-        SERVER_DIR = "server"
+        SERVER_DIR = "api"
         DOCKERFILE_NAME = "Dockerfile.prod" // Specify the name of your Dockerfile
     }
 
@@ -24,7 +24,7 @@ pipeline {
                         // Build Docker images for frontend + nginx, and backend
                         sh """
                         sudo docker build -t ${DOCKERHUB_USERNAME}/social-client:${env.DOCKER_IMAGE_TAG} -f ${env.CLIENT_DIR}/${DOCKERFILE_NAME} ${env.CLIENT_DIR}
-                        sudo docker build -t ${DOCKERHUB_USERNAME}/social-server:${env.DOCKER_IMAGE_TAG} -f ${env.SERVER_DIR}/${DOCKERFILE_NAME} ${env.SERVER_DIR}
+                        sudo docker build -t ${DOCKERHUB_USERNAME}/social-api:${env.DOCKER_IMAGE_TAG} -f ${env.SERVER_DIR}/${DOCKERFILE_NAME} ${env.SERVER_DIR}
                         """
                     }
                 }
@@ -42,7 +42,7 @@ pipeline {
                         // Push Docker images to Docker Hub
                         sh """
                         sudo docker push ${DOCKERHUB_USERNAME}/social-client:${env.DOCKER_IMAGE_TAG}
-                        sudo docker push ${DOCKERHUB_USERNAME}/social-server:${env.DOCKER_IMAGE_TAG}
+                        sudo docker push ${DOCKERHUB_USERNAME}/social-api:${env.DOCKER_IMAGE_TAG}
                         """
                     }
                 }
