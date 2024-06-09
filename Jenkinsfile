@@ -54,6 +54,12 @@ pipeline {
         always {
             // Post actions such as cleanup or notifications
             echo 'Pipeline completed.'
+
+            emailext(
+                subject: "Build ${currentBuild.fullDisplayName}",
+                body: "Build ${currentBuild.fullDisplayName} finished with status: ${currentBuild.currentResult}",
+                to: "projectgochat@gmail.com"
+            )
         }
         success {
             echo 'Pipeline succeeded.'
