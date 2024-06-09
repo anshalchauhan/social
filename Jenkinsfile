@@ -56,9 +56,18 @@ pipeline {
             echo 'Pipeline completed.'
 
             emailext(
-                subject: "Build ${currentBuild.fullDisplayName}",
-                body: "Build ${currentBuild.fullDisplayName} finished with status: ${currentBuild.currentResult}",
-                to: "projectgochat@gmail.com"
+                subject: "Pipeline Status: ${currentBuild.result}",
+                body: '''<html>
+                            <body>
+                                <p>Build Status: ${currentBuild.result}</p>
+                                <p>Build Number: ${currentBuild.number}</p>
+                                <p>Check the <a href="${env.BUILD_URL}">console output</a>.</p>
+                            </body>
+                        </html>''',
+                to: 'projectgochat@gmail.com',
+                from: 'jenkins@13.127.142.220',
+                replyTo: 'jenkins@13.127.142.220',
+                mimeType: 'text/html'
             )
         }
         success {
@@ -66,6 +75,21 @@ pipeline {
         }
         failure {
             echo 'Pipeline failed.'
+
+                emailext(
+                subject: "Pipeline Status: ${currentBuild.result}",
+                body: '''<html>
+                            <body>
+                                <p>Build Status: ${currentBuild.result}</p>
+                                <p>Build Number: ${currentBuild.number}</p>
+                                <p>Check the <a href="${env.BUILD_URL}">console output</a>.</p>
+                            </body>
+                        </html>''',
+                to: 'projectgochat@gmail.com',
+                from: 'jenkins@13.127.142.220',
+                replyTo: 'jenkins@13.127.142.220',
+                mimeType: 'text/html'
+            )
         }
     }
 }
