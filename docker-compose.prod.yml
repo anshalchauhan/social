@@ -8,7 +8,7 @@ services:
     container_name: social-client
     restart: always
     ports:
-      - 3000:80
+      - 8080:8080
 
   api:
     build:
@@ -18,3 +18,5 @@ services:
     restart: always
     env_file:
       - ./api/.env
+    ports:
+      - 8000:8000

@@ -1,0 +1,174 @@
+# Social ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: social-configmap
+data:
+  node_env: "production"
+  api_port: "8000"
+  mongo_uri: "mongodb+srv://anshalchauhan889:<password>@cluster0.ldepnbe.mongodb.net/social?retryWrites=true&w=majority"
+  jwt_expires_in: "30d"
+  jwt_cookie_expires_in: "30"
+  email_service: "gmail"
+  email_host: "smtp.gmail.com"
+  email_port: "587"
+  email: "projectgochat@gmail.com"
+  s3_bucket_name: "social-image-upload"
+  aws_s3_region: "ap-south-1"
+---
+# Client Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-deployment
+  labels:
+    app: client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client
+  template:
+    metadata:
+      labels:
+        app: client
+    spec:
+      containers:
+        - name: client
+          image: anshal8894/social-client:1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+---
+# Client Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: client-service
+spec:
+  selector:
+    app: client
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      nodePort: 30000
+---
+# Api Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+  labels:
+    app: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: api
+          image: anshal8894/social-api:1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: social-configmap
+                  key: node_env
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: social-configmap
+                  key: api_port
+            - name: MONGO_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: social-configmap
+                  key: mongo_uri
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: social-secret
+                  key: mongo_password
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: social-secret
+                  key: jwt_secret
+            - name: JWT_EXPIRES_IN
+              valueFrom:
+                configMapKeyRef:
+                  name: social-configmap
+                  key: jwt_expires_in
+            - name: JWT_COOKIE_EXPIRES_IN
+              valueFrom:
+                configMapKeyRef:
+                  name: social-configmap
+                  key: jwt_cookie_expires_in
+            - name: EMAIL_SERVICE
+              valueFrom:
+                configMapKeyRef:
+                  name: social-configmap
+                  key: email_service
+            - name: EMAIL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: social-configmap
+                  key: email_host
+            - name: EMAIL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: social-configmap
+                  key: email_port
+            - name: EMAIL
+              valueFrom:
+                configMapKeyRef:
+                  name: social-configmap
+                  key: email
+            - name: APP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: social-secret
+                  key: app_password
+            - name: S3_BUCKET_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: social-configmap
+                  key: s3_bucket_name
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: social-secret
+                  key: aws_access_key_id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: social-secret
+                  key: aws_secret_access_key
+            - name: AWS_S3_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: social-configmap
+                  key: aws_s3_region
+---
+# Api Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-service
+spec:
+  selector:
+    app: api
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000

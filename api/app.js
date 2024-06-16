@@ -23,10 +23,9 @@ const postRouter = require("./routes/postRoutes");
 const app = express();
 
 // Middlewares
-// app.use(cors());
 // app.use(
 //   cors({
-//     origin: "*",
+//     origin: "http://172.20.116.148:30000",
 //     methods: ["GET", "PATCH", "POST", "DELETE", "PUT"],
 //     credentials: true,
 //   })

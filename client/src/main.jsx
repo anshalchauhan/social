@@ -10,9 +10,6 @@ import "./index.css";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
 
-// Base URL
-export const URL = "http://localhost:5000";
-
 // Styles
 const styles = {
   global: (props) => ({
