@@ -48,12 +48,10 @@ metadata:
 spec:
   selector:
     app: client
-  type: NodePort
   ports:
     - protocol: TCP
       port: 80
       targetPort: 8080
-      nodePort: 30000
 ---
 # Api Deployment
 apiVersion: apps/v1
@@ -172,3 +170,22 @@ spec:
     - protocol: TCP
       port: 8000
       targetPort: 8000
+---
+# Nginx Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: social-ingress
+  namespace: default
+spec:
+  rules:
+    - host: projectsocial.mooo.com
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: client-service
+                port:
+                  number: 80
