@@ -1,5 +1,5 @@
 # Stage 1: Build the React application
-FROM --platform=linux/amd64 node:20-alpine3.17 as builder
+FROM --platform=linux/amd64 node:20-alpine3.19 as builder
 
 USER node
 
