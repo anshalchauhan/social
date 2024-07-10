@@ -127,8 +127,8 @@ spec:
             - name: EMAIL_PORT
               valueFrom:
                 configkMapKeyRef:
-                  name:k social-configmap
-                  key: ekmail_port
+                  name: social-configmap
+                  key: email_port
             - name: EMAIL
               valueFrom:
                 configMapKeyRef:
