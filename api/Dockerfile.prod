@@ -1,15 +1,23 @@
-FROM --platform=linux/amd64 node:20-alpine3.19
-
-USER node
+# Stage 1: Build the application with local platform
+FROM --platform=$BUILDPLATFORM node:20-alpine3.19 as build
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
 
 WORKDIR /app
 
-COPY --chown=node:node package*.json ./
+COPY package*.json ./
 
-RUN npm install --omit=dev
+RUN npm install
 
-COPY --chown=node:node . .
+COPY . .
 
-EXPOSE 8000
+# Stage 2: Create the final image with the platform of the worker nodes
+FROM --platform=$TARGETPLATFORM node:20-alpine3.19
+
+WORKDIR /app
+
+COPY --from=build /app /app
+
+EXPOSE 3000
 
 CMD ["npm", "run", "start"]
